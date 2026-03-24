@@ -10,9 +10,10 @@ import aiRoutes from "./routes/aiRoutes.js";
 import authRoutes from "./routes/authRoutes.js";
 import expenseRoutes from "./routes/expenseRoutes.js";
 import goalRoutes from "./routes/goalRoutes.js";
-app.set("trust proxy", 1);
+
 
 const app = express();
+app.set("trust proxy", 1);
 
 app.use(
   cors({
