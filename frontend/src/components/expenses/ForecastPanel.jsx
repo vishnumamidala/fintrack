@@ -1,7 +1,7 @@
 import { formatCurrency } from "../../utils/format";
 
 export const ForecastPanel = ({ forecast, suggestedBudget }) => (
-  <div className="card forecast-card">
+  <div className="card forecast-card reveal-up">
     <div className="card-head">
       <h3>Month-End Forecast</h3>
       <span className={`score-pill ${forecast.projectedBalance >= 0 ? "success" : "danger"}`}>

@@ -9,7 +9,7 @@ export const ScenarioPlanner = ({ categories, scenarioResult, onRunScenario }) =
   });
 
   return (
-    <section className="card scenario-card">
+    <section className="card scenario-card reveal-up">
       <div className="card-head">
         <h3>Scenario Planner</h3>
       </div>
@@ -69,4 +69,3 @@ export const ScenarioPlanner = ({ categories, scenarioResult, onRunScenario }) =
     </section>
   );
 };
-

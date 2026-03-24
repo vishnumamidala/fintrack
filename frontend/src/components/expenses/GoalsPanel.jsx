@@ -10,7 +10,7 @@ export const GoalsPanel = ({ goals, onCreateGoal, onDeleteGoal }) => {
   });
 
   return (
-    <section className="card goals-card">
+    <section className="card goals-card reveal-up">
       <div className="card-head">
         <h3>Savings Goals</h3>
       </div>
@@ -58,4 +58,3 @@ export const GoalsPanel = ({ goals, onCreateGoal, onDeleteGoal }) => {
     </section>
   );
 };
-

@@ -1,8 +1,8 @@
 import { formatCurrency, formatDate } from "../../utils/format";
 
 export const AlertsPanel = ({ anomalies, recurring }) => (
-  <div className="alerts-grid">
-    <section className="card alerts-card">
+  <div className="alerts-grid reveal-up">
+    <section className="card alerts-card reveal-up">
       <div className="card-head">
         <h3>Anomaly Alerts</h3>
       </div>
@@ -23,7 +23,7 @@ export const AlertsPanel = ({ anomalies, recurring }) => (
       )}
     </section>
 
-    <section className="card alerts-card">
+    <section className="card alerts-card reveal-up">
       <div className="card-head">
         <h3>Recurring Payments</h3>
       </div>

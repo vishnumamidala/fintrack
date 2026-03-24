@@ -1,5 +1,5 @@
 export const ExpenseFilters = ({ filters, onChange, onReset, onExport }) => (
-  <div className="card filters">
+  <div className="card filters reveal-up">
     <div className="card-head">
       <h3>Filters & Sorting</h3>
       <button className="button ghost" onClick={onReset}>

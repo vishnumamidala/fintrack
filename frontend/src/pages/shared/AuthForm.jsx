@@ -7,11 +7,27 @@ export const AuthForm = ({ title, subtitle, fields, submitLabel, onSubmit, foote
 
   return (
     <div className="auth-shell">
-      <section className="auth-panel">
+      <div className="page-orb orb-one" />
+      <div className="page-orb orb-three" />
+      <section className="auth-panel reveal-up">
         <div className="auth-copy">
-          <p className="eyebrow">Production-ready Expense Tracker</p>
+          <p className="eyebrow">Personal Finance, Refined</p>
           <h1>{title}</h1>
           <p>{subtitle}</p>
+          <div className="auth-feature-list">
+            <div>
+              <strong>Forecasting</strong>
+              <span>See your month-end trajectory before the month is over.</span>
+            </div>
+            <div>
+              <strong>Goals</strong>
+              <span>Track savings with a calmer, more focused planning workflow.</span>
+            </div>
+            <div>
+              <strong>Intelligence</strong>
+              <span>Spot subscriptions, anomalies, and budget pressure automatically.</span>
+            </div>
+          </div>
         </div>
         <form
           className="auth-form"
@@ -42,4 +58,3 @@ export const AuthForm = ({ title, subtitle, fields, submitLabel, onSubmit, foote
     </div>
   );
 };
-

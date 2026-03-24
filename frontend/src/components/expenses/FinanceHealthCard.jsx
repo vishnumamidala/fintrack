@@ -2,7 +2,7 @@ export const FinanceHealthCard = ({ health }) => {
   const tone = health.score >= 80 ? "success" : health.score >= 65 ? "info" : health.score >= 45 ? "warning" : "danger";
 
   return (
-    <div className="card health-card">
+    <div className="card health-card reveal-up">
       <div className="card-head">
         <h3>Spend Health Score</h3>
         <span className={`score-pill ${tone}`}>{health.label}</span>
@@ -23,4 +23,3 @@ export const FinanceHealthCard = ({ health }) => {
     </div>
   );
 };
-

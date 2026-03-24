@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom/client";
 import { Toaster } from "react-hot-toast";
 import { RouterProvider } from "react-router-dom";
+import { GlobalMotionEffects } from "./components/common/GlobalMotionEffects";
 import { AuthProvider } from "./context/AuthContext";
 import { ExpenseProvider } from "./context/ExpenseContext";
 import { router } from "./router";
@@ -11,6 +12,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
     <AuthProvider>
       <ExpenseProvider>
+        <GlobalMotionEffects />
         <RouterProvider router={router} />
         <Toaster
           position="top-right"
@@ -28,4 +30,3 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     </AuthProvider>
   </React.StrictMode>
 );
-

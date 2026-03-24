@@ -24,7 +24,7 @@ export const SettingsPage = () => {
 
   return (
     <div className="dashboard">
-      <section className="card">
+      <section className="card reveal-up">
         <div className="card-head">
           <div>
             <h3>Budget Settings</h3>
@@ -103,4 +103,3 @@ export const SettingsPage = () => {
     </div>
   );
 };
-

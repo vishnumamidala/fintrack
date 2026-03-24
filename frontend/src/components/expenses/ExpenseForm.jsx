@@ -21,7 +21,7 @@ export const ExpenseForm = ({ onSubmit }) => {
   };
 
   return (
-    <form className="expense-form card" onSubmit={handleSubmit}>
+    <form className="expense-form card reveal-up" onSubmit={handleSubmit}>
       <div className="card-head">
         <h3>Add New Entry</h3>
       </div>

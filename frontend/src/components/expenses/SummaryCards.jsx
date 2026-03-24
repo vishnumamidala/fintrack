@@ -5,22 +5,22 @@ export const SummaryCards = ({ totals, insights }) => {
   const changeTone = insights?.difference > 0 ? "warning" : "success";
 
   return (
-    <div className="summary-grid">
-      <article className="metric-card">
+    <div className="summary-grid reveal-up">
+      <article className="metric-card reveal-up">
         <div className="metric-icon">
           <Wallet size={18} />
         </div>
         <span>Total Balance</span>
         <h2>{formatCurrency(totals.balance)}</h2>
       </article>
-      <article className="metric-card">
+      <article className="metric-card reveal-up">
         <div className="metric-icon income">
           <ArrowUpRight size={18} />
         </div>
         <span>Income</span>
         <h2>{formatCurrency(totals.income)}</h2>
       </article>
-      <article className="metric-card">
+      <article className="metric-card reveal-up">
         <div className="metric-icon expense">
           <ArrowDownRight size={18} />
         </div>
@@ -35,4 +35,3 @@ export const SummaryCards = ({ totals, insights }) => {
     </div>
   );
 };
-

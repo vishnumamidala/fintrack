@@ -1,7 +1,7 @@
 import { formatCurrency } from "../../utils/format";
 
 export const InsightsPanel = ({ insights, recommendations }) => (
-  <div className="card insights-card">
+  <div className="card insights-card reveal-up">
     <div className="card-head">
       <h3>Smart Insights</h3>
     </div>

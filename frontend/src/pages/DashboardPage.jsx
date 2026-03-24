@@ -70,12 +70,12 @@ export const DashboardPage = () => {
 
   return (
     <div className="dashboard">
-      <section className="hero-panel">
+      <section className="hero-panel reveal-up">
         <div>
           <p className="eyebrow">Overview</p>
-          <h2>Control spending without losing momentum</h2>
+          <h2>Money clarity, designed to feel effortless.</h2>
           <p className="hero-copy">
-            Track income, keep expenses under budget, and catch risky patterns before they grow.
+            Track income, forecast the month ahead, and spot risky patterns with a calmer, premium workflow.
           </p>
         </div>
         {summary ? (
@@ -90,13 +90,13 @@ export const DashboardPage = () => {
       ) : (
         <>
           <SummaryCards totals={summary.totals} insights={summary.insights} />
-          <section className="product-grid">
+          <section className="product-grid reveal-up">
             <FinanceHealthCard health={summary.health} />
             <ForecastPanel forecast={summary.forecast} suggestedBudget={summary.recommendations.suggestedBudget} />
           </section>
           <InsightsPanel insights={summary.insights} recommendations={summary.recommendations} />
           <AlertsPanel anomalies={summary.anomalies} recurring={summary.recurring} />
-          <section className="product-grid">
+          <section className="product-grid reveal-up">
             <ScenarioPlanner
               categories={summary.recommendations.topCategories}
               scenarioResult={scenarioResult}
@@ -111,7 +111,7 @@ export const DashboardPage = () => {
             error={assistantError}
             onAsk={askAssistant}
           />
-          <section className="chart-grid">
+          <section className="chart-grid reveal-up">
             <CategoryPieChart data={categoryBreakdown} />
             <MonthlyBarChart data={monthlyExpenses} />
             <TrendLineChart data={monthlyExpenses} />

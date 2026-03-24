@@ -10,9 +10,11 @@ export const AppLayout = () => {
 
   return (
     <div className="app-shell">
-      <header className="topbar">
+      <div className="page-orb orb-one" />
+      <div className="page-orb orb-two" />
+      <header className="topbar reveal-up">
         <div>
-          <p className="eyebrow">Expense Intelligence</p>
+          <p className="eyebrow">Financial OS</p>
           <h1>Welcome back, {user?.name?.split(" ")[0]}</h1>
         </div>
         <div className="topbar-actions">
@@ -32,7 +34,7 @@ export const AppLayout = () => {
           </button>
         </div>
       </header>
-      <main>
+      <main className="reveal-up">
         <Outlet />
       </main>
     </div>

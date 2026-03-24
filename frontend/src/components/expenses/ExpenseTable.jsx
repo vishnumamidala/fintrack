@@ -29,7 +29,7 @@ export const ExpenseTable = ({ expenses, onUpdate, onDelete }) => {
 
   return (
     <>
-      <div className="card table-card">
+      <div className="card table-card reveal-up">
         <div className="card-head">
           <h3>Recent Transactions</h3>
         </div>
@@ -138,4 +138,3 @@ export const ExpenseTable = ({ expenses, onUpdate, onDelete }) => {
     </>
   );
 };
-
