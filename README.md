@@ -146,9 +146,9 @@ Current coverage focus:
 
 This repo includes:
 
-- [docker-compose.yml](/Users/vishnumamidala/Documents/New%20project/docker-compose.yml)
-- [backend/Dockerfile](/Users/vishnumamidala/Documents/New%20project/backend/Dockerfile)
-- [frontend/Dockerfile](/Users/vishnumamidala/Documents/New%20project/frontend/Dockerfile)
+- `docker-compose.yml`
+- `backend/Dockerfile`
+- `frontend/Dockerfile`
 
 To run the full stack in containers:
 
