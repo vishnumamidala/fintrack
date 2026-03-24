@@ -133,11 +133,26 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+  const updateProfile = async (payload) => {
+    try {
+      const response = await api.put("/auth/me/profile", payload);
+      const user = response.data.data.user;
+      localStorage.setItem("expense-tracker-user", JSON.stringify(user));
+      dispatch({ type: "SET_USER", payload: user });
+      toast.success("Profile updated");
+      return true;
+    } catch (error) {
+      toast.error(error.response?.data?.error?.message || "Unable to update profile");
+      return false;
+    }
+  };
+
   const value = useMemo(
     () => ({
       ...state,
       login,
       register,
+      updateProfile,
       updatePreferences,
       logout,
     }),

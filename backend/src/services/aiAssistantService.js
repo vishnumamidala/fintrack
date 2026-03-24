@@ -97,29 +97,85 @@ export const generateAssistantResponse = async ({ user, prompt, analytics, expen
   return [summary, "", ...actionItems.map((item) => `- ${item}`)].join("\n");
 };
 
-const buildLocalModelPrompt = ({ user, prompt, analytics, expenses }) => `
-You are a concise personal finance assistant inside an expense tracker.
-Use only the data provided below. Do not invent facts.
-Give one short summary paragraph followed by 2 to 4 actionable bullet points.
-
-User: ${user.name}
-Question: ${prompt}
-Totals: ${JSON.stringify(analytics.totals)}
-Insights: ${JSON.stringify(analytics.insights)}
-Category breakdown: ${JSON.stringify(analytics.categoryBreakdown)}
-Monthly totals: ${JSON.stringify(analytics.monthlyTotals)}
-Recent transactions: ${JSON.stringify(
-  expenses.map((expense) => ({
+const buildContextPayload = ({ user, analytics, expenses, history }) => ({
+  user: {
+    name: user.name,
+    monthlyBudget: user.monthlyBudget,
+    categoryBudgets: user.categoryBudgets || [],
+  },
+  totals: analytics.totals,
+  insights: analytics.insights,
+  forecast: analytics.forecast,
+  health: analytics.health,
+  goals: analytics.goals || [],
+  recurring: analytics.recurring,
+  anomalies: analytics.anomalies,
+  recentTransactions: expenses.map((expense) => ({
     title: expense.title,
     amount: expense.amount,
     category: expense.category,
     type: expense.type,
     date: expense.date,
-  }))
-)}
+    merchant: expense.merchant,
+    paymentMethod: expense.paymentMethod,
+  })),
+  conversationHistory: history,
+});
+
+const buildLocalModelPrompt = ({ user, prompt, analytics, expenses, history }) => `
+You are a personal finance assistant inside an expense tracker.
+You must behave like a helpful multi-turn chat assistant, not a one-shot generator.
+Use only the financial data and conversation history provided.
+If the user asks a broad question, ask one short clarifying question when helpful.
+If the user already answered earlier in the chat, use that answer.
+Be concise, natural, and conversational.
+
+Context:
+${JSON.stringify(buildContextPayload({ user, analytics, expenses, history }))}
+
+Current user message:
+${prompt}
 `;
 
-export const generateHybridAssistantResponse = async ({ user, prompt, analytics, expenses }) => {
+const buildRuleBasedChatResponse = ({ user, prompt, analytics, expenses, history }) => {
+  const lowerPrompt = prompt.toLowerCase();
+  const previousUserMessages = history.filter((message) => message.role === "user").map((message) => message.content.toLowerCase());
+  const lastPreference = previousUserMessages.find((message) =>
+    ["food", "shopping", "transport", "savings", "budget"].some((keyword) => message.includes(keyword))
+  );
+
+  if (lowerPrompt.includes("save more") || lowerPrompt.includes("how can i save")) {
+    if (!analytics.insights.topSpendingCategory) {
+      return "I need a little more spending history before I can suggest the best place to cut. Add a few expense entries or load sample data and I’ll help you prioritize.";
+    }
+
+    return `Your biggest spending category right now is ${analytics.insights.topSpendingCategory}. If you want, we can focus there first. Do you want to reduce ${analytics.insights.topSpendingCategory.toLowerCase()} spend, or would you rather improve your monthly budget plan?`;
+  }
+
+  if (lowerPrompt.includes("focus there") || lowerPrompt.includes("yes") || lowerPrompt.includes("reduce")) {
+    const chosenCategory =
+      ["food", "shopping", "transport", "health", "utilities", "entertainment"].find((item) => lowerPrompt.includes(item)) ||
+      ["food", "shopping", "transport", "health", "utilities", "entertainment"].find((item) => lastPreference?.includes(item)) ||
+      analytics.insights.topSpendingCategory?.toLowerCase();
+
+    const categoryTotal =
+      analytics.categoryBreakdown.find(
+        (item) => item._id.type === "expense" && item._id.category.toLowerCase() === chosenCategory
+      )?.total || 0;
+
+    if (!chosenCategory) {
+      return generateAssistantResponse({ user, prompt, analytics, expenses });
+    }
+
+    return `${chosenCategory[0].toUpperCase()}${chosenCategory.slice(1)} spending is about ${formatCurrency(
+      categoryTotal
+    )} in your current data. Cutting that by 10-15% would improve your projected month-end balance. A simple first step is to cap discretionary purchases in that category for the rest of the month.`;
+  }
+
+  return generateAssistantResponse({ user, prompt, analytics, expenses });
+};
+
+export const generateHybridAssistantResponse = async ({ user, prompt, analytics, expenses, history = [] }) => {
   try {
     const response = await fetch(`${env.ollamaHost}/api/generate`, {
       method: "POST",
@@ -128,7 +184,7 @@ export const generateHybridAssistantResponse = async ({ user, prompt, analytics,
       },
       body: JSON.stringify({
         model: env.ollamaModel,
-        prompt: buildLocalModelPrompt({ user, prompt, analytics, expenses }),
+        prompt: buildLocalModelPrompt({ user, prompt, analytics, expenses, history }),
         stream: false,
       }),
     });
@@ -144,6 +200,6 @@ export const generateHybridAssistantResponse = async ({ user, prompt, analytics,
 
     throw new Error("Empty Ollama response");
   } catch (error) {
-    return generateAssistantResponse({ user, prompt, analytics, expenses });
+    return buildRuleBasedChatResponse({ user, prompt, analytics, expenses, history });
   }
 };

@@ -50,11 +50,14 @@ export const ExpenseTable = ({ expenses, onUpdate, onDelete }) => {
                 const isEditing = editingId === expense._id;
                 return (
                   <tr key={expense._id}>
-                    <td>
+                    <td className="transaction-main-cell">
                       {isEditing ? (
                         <input value={draft.title} onChange={(event) => setDraft((prev) => ({ ...prev, title: event.target.value }))} />
                       ) : (
-                        expense.title
+                        <div className="transaction-main">
+                          <strong>{expense.title}</strong>
+                          <span>{expense.merchant || expense.notes || "No additional details"}</span>
+                        </div>
                       )}
                     </td>
                     <td>

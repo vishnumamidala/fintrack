@@ -2,6 +2,7 @@ import { StatusCodes } from "http-status-codes";
 import { Goal } from "../models/Goal.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
+import { logActivity } from "../utils/logActivity.js";
 
 const enrichGoal = (goal) => {
   const targetAmount = goal.targetAmount || 0;
@@ -31,6 +32,21 @@ export const getGoals = asyncHandler(async (req, res) => {
 
 export const createGoal = asyncHandler(async (req, res) => {
   const goal = await Goal.create({ ...req.body, user: req.user._id });
+
+  await logActivity({
+    userId: req.user._id,
+    action: "goal.created",
+    entityType: "goal",
+    entityId: goal._id,
+    title: "Savings goal created",
+    description: `${goal.title} was added with a target of ${goal.targetAmount}.`,
+    metadata: {
+      title: goal.title,
+      targetAmount: goal.targetAmount,
+      targetDate: goal.targetDate,
+    },
+  });
+
   res.status(StatusCodes.CREATED).json({
     success: true,
     message: "Goal created successfully",
@@ -48,6 +64,20 @@ export const updateGoal = asyncHandler(async (req, res) => {
     throw new ApiError(StatusCodes.NOT_FOUND, "Goal not found");
   }
 
+  await logActivity({
+    userId: req.user._id,
+    action: "goal.updated",
+    entityType: "goal",
+    entityId: goal._id,
+    title: "Savings goal updated",
+    description: `${goal.title} progress or target details changed.`,
+    metadata: {
+      title: goal.title,
+      targetAmount: goal.targetAmount,
+      currentAmount: goal.currentAmount,
+    },
+  });
+
   res.status(StatusCodes.OK).json({
     success: true,
     message: "Goal updated successfully",
@@ -61,9 +91,20 @@ export const deleteGoal = asyncHandler(async (req, res) => {
     throw new ApiError(StatusCodes.NOT_FOUND, "Goal not found");
   }
 
+  await logActivity({
+    userId: req.user._id,
+    action: "goal.deleted",
+    entityType: "goal",
+    entityId: goal._id,
+    title: "Savings goal removed",
+    description: `${goal.title} was deleted.`,
+    metadata: {
+      title: goal.title,
+    },
+  });
+
   res.status(StatusCodes.OK).json({
     success: true,
     message: "Goal deleted successfully",
   });
 });
-

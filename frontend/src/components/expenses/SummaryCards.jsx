@@ -10,21 +10,21 @@ export const SummaryCards = ({ totals, insights }) => {
         <div className="metric-icon">
           <Wallet size={18} />
         </div>
-        <span>Total Balance</span>
+        <span className="metric-label">Total Balance</span>
         <h2>{formatCurrency(totals.balance)}</h2>
       </article>
       <article className="metric-card reveal-up">
         <div className="metric-icon income">
           <ArrowUpRight size={18} />
         </div>
-        <span>Income</span>
+        <span className="metric-label">Income</span>
         <h2>{formatCurrency(totals.income)}</h2>
       </article>
       <article className="metric-card reveal-up">
         <div className="metric-icon expense">
           <ArrowDownRight size={18} />
         </div>
-        <span>Expenses</span>
+        <span className="metric-label">Expenses</span>
         <h2>{formatCurrency(totals.expense)}</h2>
         <p className={`metric-note ${changeTone}`}>
           {insights?.changePercentage === null

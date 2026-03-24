@@ -10,3 +10,6 @@ export const aiAssistantValidator = [
   body("filters").optional().isObject().withMessage("Filters must be an object"),
 ];
 
+export const assistantHistoryValidator = [
+  body("filters").optional().isObject().withMessage("Filters must be an object"),
+];

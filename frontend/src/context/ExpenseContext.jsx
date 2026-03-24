@@ -21,12 +21,13 @@ const initialState = {
   pagination: null,
   summary: null,
   goals: [],
+  activityFeed: [],
   scenarioResult: null,
   filters: initialFilters,
   loading: false,
   summaryLoading: false,
   assistantLoading: false,
-  assistantResponse: "",
+  assistantMessages: [],
   assistantError: "",
 };
 
@@ -42,12 +43,14 @@ const expenseReducer = (state, action) => {
       return { ...state, summary: action.payload, summaryLoading: false };
     case "SET_GOALS":
       return { ...state, goals: action.payload };
+    case "SET_ACTIVITY_FEED":
+      return { ...state, activityFeed: action.payload };
     case "SET_SCENARIO":
       return { ...state, scenarioResult: action.payload };
     case "SET_ASSISTANT_LOADING":
       return { ...state, assistantLoading: action.payload };
-    case "SET_ASSISTANT_RESPONSE":
-      return { ...state, assistantResponse: action.payload, assistantError: "", assistantLoading: false };
+    case "SET_ASSISTANT_MESSAGES":
+      return { ...state, assistantMessages: action.payload, assistantError: "", assistantLoading: false };
     case "SET_ASSISTANT_ERROR":
       return { ...state, assistantError: action.payload, assistantLoading: false };
     case "SET_FILTERS":
@@ -167,7 +170,7 @@ export const ExpenseProvider = ({ children }) => {
 
     try {
       const response = await api.post("/ai/assistant", { prompt, filters });
-      dispatch({ type: "SET_ASSISTANT_RESPONSE", payload: response.data.data.answer });
+      dispatch({ type: "SET_ASSISTANT_MESSAGES", payload: response.data.data.messages || [] });
     } catch (error) {
       dispatch({
         type: "SET_ASSISTANT_ERROR",
@@ -178,12 +181,54 @@ export const ExpenseProvider = ({ children }) => {
     }
   };
 
+  const fetchAssistantChat = async () => {
+    dispatch({ type: "SET_ASSISTANT_LOADING", payload: true });
+
+    try {
+      const response = await api.get("/ai/assistant");
+      dispatch({ type: "SET_ASSISTANT_MESSAGES", payload: response.data.data.messages || [] });
+    } catch (error) {
+      dispatch({
+        type: "SET_ASSISTANT_ERROR",
+        payload:
+          error.response?.data?.error?.message ||
+          "Unable to load your assistant history right now.",
+      });
+    }
+  };
+
+  const resetAssistantChat = async () => {
+    dispatch({ type: "SET_ASSISTANT_LOADING", payload: true });
+
+    try {
+      const response = await api.delete("/ai/assistant");
+      dispatch({ type: "SET_ASSISTANT_MESSAGES", payload: response.data.data.messages || [] });
+      toast.success("Assistant chat cleared");
+    } catch (error) {
+      dispatch({
+        type: "SET_ASSISTANT_ERROR",
+        payload:
+          error.response?.data?.error?.message ||
+          "Unable to clear the assistant chat right now.",
+      });
+    }
+  };
+
   const fetchGoals = async () => {
     try {
       const response = await api.get("/goals");
       dispatch({ type: "SET_GOALS", payload: response.data.data });
     } catch (error) {
       toast.error("Unable to load goals");
+    }
+  };
+
+  const fetchActivityFeed = async (limit = 24) => {
+    try {
+      const response = await api.get(`/auth/me/activity?limit=${limit}`);
+      dispatch({ type: "SET_ACTIVITY_FEED", payload: response.data.data || [] });
+    } catch (error) {
+      toast.error("Unable to load activity feed");
     }
   };
 
@@ -239,8 +284,11 @@ export const ExpenseProvider = ({ children }) => {
       deleteExpense,
       exportCsv,
       askAssistant,
+      fetchAssistantChat,
+      resetAssistantChat,
       seedSampleData,
       fetchGoals,
+      fetchActivityFeed,
       createGoal,
       deleteGoal,
       runScenario,

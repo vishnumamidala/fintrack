@@ -1,5 +1,18 @@
 import { body } from "express-validator";
 
+export const profileValidator = [
+  body("name")
+    .optional()
+    .trim()
+    .isLength({ min: 2, max: 50 })
+    .withMessage("Name must be between 2 and 50 characters"),
+  body("avatar")
+    .optional()
+    .isString()
+    .isLength({ max: 600000 })
+    .withMessage("Avatar image is too large"),
+];
+
 export const preferenceValidator = [
   body("monthlyBudget")
     .optional()
@@ -16,4 +29,3 @@ export const preferenceValidator = [
     .isFloat({ min: 0 })
     .withMessage("Category budget must be greater than or equal to 0"),
 ];
-

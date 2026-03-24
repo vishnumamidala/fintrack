@@ -4,6 +4,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import { getExpenseAnalytics } from "../utils/expenseAnalytics.js";
 import { buildExpenseFilters, getSortOption } from "../utils/expenseQuery.js";
+import { logActivity } from "../utils/logActivity.js";
 
 const createSampleExpenses = (userId) => {
   const today = new Date();
@@ -32,6 +33,21 @@ export const createExpense = asyncHandler(async (req, res) => {
   const expense = await Expense.create({
     ...req.body,
     user: req.user._id,
+  });
+
+  await logActivity({
+    userId: req.user._id,
+    action: `expense.${expense.type}.created`,
+    entityType: "expense",
+    entityId: expense._id,
+    title: `${expense.type === "income" ? "Income" : "Expense"} added`,
+    description: `${expense.title} was recorded for ${expense.amount}.`,
+    metadata: {
+      amount: expense.amount,
+      category: expense.category,
+      type: expense.type,
+      date: expense.date,
+    },
   });
 
   res.status(StatusCodes.CREATED).json({
@@ -79,6 +95,20 @@ export const updateExpense = asyncHandler(async (req, res) => {
     throw new ApiError(StatusCodes.NOT_FOUND, "Expense not found");
   }
 
+  await logActivity({
+    userId: req.user._id,
+    action: `expense.${expense.type}.updated`,
+    entityType: "expense",
+    entityId: expense._id,
+    title: `${expense.type === "income" ? "Income" : "Expense"} updated`,
+    description: `${expense.title} was updated.`,
+    metadata: {
+      amount: expense.amount,
+      category: expense.category,
+      type: expense.type,
+    },
+  });
+
   res.status(StatusCodes.OK).json({
     success: true,
     message: "Expense updated successfully",
@@ -95,6 +125,20 @@ export const deleteExpense = asyncHandler(async (req, res) => {
   if (!expense) {
     throw new ApiError(StatusCodes.NOT_FOUND, "Expense not found");
   }
+
+  await logActivity({
+    userId: req.user._id,
+    action: `expense.${expense.type}.deleted`,
+    entityType: "expense",
+    entityId: expense._id,
+    title: `${expense.type === "income" ? "Income" : "Expense"} removed`,
+    description: `${expense.title} was deleted.`,
+    metadata: {
+      amount: expense.amount,
+      category: expense.category,
+      type: expense.type,
+    },
+  });
 
   res.status(StatusCodes.OK).json({
     success: true,
@@ -122,6 +166,17 @@ export const seedSampleExpenses = asyncHandler(async (req, res) => {
   const sampleExpenses = createSampleExpenses(req.user._id);
   const expenses = await Expense.insertMany(sampleExpenses);
 
+  await logActivity({
+    userId: req.user._id,
+    action: "expense.seeded",
+    entityType: "expense",
+    title: "Sample data loaded",
+    description: `Added ${expenses.length} sample transactions for demo exploration.`,
+    metadata: {
+      count: expenses.length,
+    },
+  });
+
   res.status(StatusCodes.CREATED).json({
     success: true,
     message: "Sample transactions added successfully",
@@ -144,6 +199,20 @@ export const runScenario = asyncHandler(async (req, res) => {
   const totalDelta = percentageDelta + Number(fixedAmountDelta || 0);
   const projectedExpense = Math.max(analytics.forecast.projectedExpense + totalDelta, 0);
   const projectedBalance = analytics.totals.income - projectedExpense;
+
+  await logActivity({
+    userId: req.user._id,
+    action: "scenario.ran",
+    entityType: "scenario",
+    title: "Scenario planner used",
+    description: `Ran a scenario for ${category || "all expenses"}.`,
+    metadata: {
+      category: category || "All expenses",
+      adjustmentPercent: Number(adjustmentPercent),
+      fixedAmountDelta: Number(fixedAmountDelta || 0),
+      projectedBalance: Number(projectedBalance.toFixed(2)),
+    },
+  });
 
   res.status(StatusCodes.OK).json({
     success: true,

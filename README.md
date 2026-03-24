@@ -9,9 +9,20 @@ A production-ready MERN expense tracker built to showcase full-stack engineering
 - MongoDB aggregation for monthly summaries, category breakdowns, and advanced analytics
 - SaaS-style dashboard features: forecasting, anomaly alerts, recurring payment detection, spend health scoring, and suggested budgets
 - Differentiators: scenario planner, savings goals, subscription-style bill reminders, AI-style assistant with free Ollama support and local fallback
+- Trust and product maturity features: dedicated assistant workspace, activity timeline, and audit-style visibility across major user actions
 - User-managed settings, richer transaction metadata, and sample-data onboarding for demo readiness
 
 ## Architecture
+
+```mermaid
+flowchart LR
+  UI["React + Vite Frontend"] --> API["Express API Layer"]
+  API --> AUTH["Auth + Validation Middleware"]
+  API --> CTRL["Controllers"]
+  CTRL --> ANALYTICS["Analytics + Assistant Utilities"]
+  CTRL --> DB[("MongoDB")]
+  ANALYTICS --> DB
+```
 
 ### Backend
 
@@ -75,7 +86,9 @@ A production-ready MERN expense tracker built to showcase full-stack engineering
 - Scenario planner for “what-if” cost reductions or increases
 - Savings goals with progress and required monthly savings
 - Smart assistant panel using free Ollama when available
+- Dedicated assistant chatbot section with multi-turn context
 - Built-in assistant fallback when local AI is unavailable
+- Activity timeline for audit-style product visibility
 - Sample-data onboarding to demo the product instantly
 
 ## Local development
@@ -176,6 +189,7 @@ Services:
 - `POST /api/expenses/scenario`
 - `POST /api/expenses/seed-sample`
 - `POST /api/ai/assistant`
+- `GET /api/auth/me/activity`
 - `GET /api/goals`
 - `POST /api/goals`
 - `PUT /api/goals/:id`
@@ -185,6 +199,8 @@ Services:
 
 - Show the dashboard with sample data to demonstrate the analytics pipeline
 - Walk through how aggregation powers forecasts, recurring reminders, and health scoring
+- Show the assistant workspace and explain how conversation history is stored and reused
+- Show the activity timeline to demonstrate auditability and product trust thinking
 - Explain the fallback design for AI so the product remains useful without paid APIs
 - Highlight that the app includes product thinking, not just CRUD
 - Mention Docker support and tests as part of production-readiness

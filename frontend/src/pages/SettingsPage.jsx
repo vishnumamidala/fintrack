@@ -24,7 +24,17 @@ export const SettingsPage = () => {
 
   return (
     <div className="dashboard">
-      <section className="card reveal-up">
+      <section className="assistant-hero reveal-up">
+        <div>
+          <p className="eyebrow">Settings</p>
+          <h2>Budget controls, reduced to the essentials.</h2>
+          <p className="hero-copy">
+            Define the limits that shape your forecasts, nudges, and recommendations without cluttering the workflow.
+          </p>
+        </div>
+      </section>
+
+      <section className="card settings-card reveal-up">
         <div className="card-head">
           <div>
             <h3>Budget Settings</h3>
