@@ -1,0 +1,43 @@
+version: "3.9"
+
+services:
+  mongodb:
+    image: mongo:7
+    container_name: expense-tracker-mongodb
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build:
+      context: ./backend
+    container_name: expense-tracker-backend
+    restart: unless-stopped
+    depends_on:
+      - mongodb
+    environment:
+      PORT: 5001
+      NODE_ENV: production
+      MONGODB_URI: mongodb://mongodb:27017/expense-tracker
+      JWT_SECRET: change_this_secret
+      JWT_EXPIRES_IN: 7d
+      CLIENT_URL: http://localhost:5173
+      OLLAMA_HOST: http://host.docker.internal:11434
+      OLLAMA_MODEL: llama3.2:3b
+    ports:
+      - "5001:5001"
+
+  frontend:
+    build:
+      context: ./frontend
+    container_name: expense-tracker-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "5173:80"
+
+volumes:
+  mongo_data:
